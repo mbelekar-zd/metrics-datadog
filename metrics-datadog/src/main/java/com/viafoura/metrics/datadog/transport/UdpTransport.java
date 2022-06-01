@@ -1,8 +1,7 @@
 package com.viafoura.metrics.datadog.transport;
 
-import com.timgroup.statsd.NonBlockingStatsDClient;
+import com.timgroup.statsd.NonBlockingStatsDClientBuilder;
 import com.timgroup.statsd.StatsDClient;
-import com.timgroup.statsd.StatsDClientErrorHandler;
 import com.viafoura.metrics.datadog.model.DatadogCounter;
 import com.viafoura.metrics.datadog.model.DatadogGauge;
 import org.slf4j.Logger;
@@ -38,20 +37,17 @@ public class UdpTransport implements Transport {
       socketAddressCallable = staticAddressResolver(statsdHost, port);
     }
 
-    statsd = new NonBlockingStatsDClient(
-            prefix,
-            Integer.MAX_VALUE,
-            globalTags,
-            new StatsDClientErrorHandler() {
-              public void handle(Exception e) {
-                LOG.error(e.getMessage(), e);
-              }
-            },
-            socketAddressCallable,
-	    socketTimeoutMs,
-	    socketBufferBytes,
-	    maxPacketSizeBytes
-    );
+    statsd =
+        new NonBlockingStatsDClientBuilder()
+            .prefix(prefix)
+            .queueSize(Integer.MAX_VALUE)
+            .constantTags(globalTags)
+            .errorHandler(e -> LOG.error(e.getMessage(), e))
+            .addressLookup(socketAddressCallable)
+            .timeout(socketTimeoutMs)
+            .socketBufferSize(socketBufferBytes)
+            .maxPacketSizeBytes(maxPacketSizeBytes)
+            .build();
   }
 
   public void close() throws IOException {
@@ -177,7 +173,7 @@ public class UdpTransport implements Transport {
   // Visible for testing.
   static Callable<SocketAddress> staticAddressResolver(final String host, final int port) {
     try {
-      return NonBlockingStatsDClient.staticAddressResolution(host, port);
+      return NonBlockingStatsDClientBuilder.staticAddressResolution(host, port);
     } catch(final Exception e) {
       LOG.error("Error during constructing statsd address resolver.", e);
       throw new RuntimeException(e);
@@ -186,6 +182,6 @@ public class UdpTransport implements Transport {
 
   // Visible for testing.
   static Callable<SocketAddress> volatileAddressResolver(final String host, final int port) {
-    return NonBlockingStatsDClient.volatileAddressResolution(host, port);
+    return NonBlockingStatsDClientBuilder.volatileAddressResolution(host, port);
   }
 }
