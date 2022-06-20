@@ -106,7 +106,7 @@ First, add the `dropwizard-metrics-datadog` dependency in your POM:
     <dependency>
         <groupId>com.viafoura</groupId>
         <artifactId>dropwizard-metrics-datadog</artifactId>
-        <version>2.0.0-RC2</version>
+        <version>2.0.0-RC3</version>
     </dependency>
 ~~~
 
@@ -288,14 +288,14 @@ Metrics datadog reporter is available as an artifact on
 
 * Group: com.viafoura
 * Artifact: metrics-datadog
-* Version: 2.0.0-RC2
+* Version: 2.0.0-RC3
 
 Dropwizard datadog reporter is available as an artifact on
 [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.viafoura%22%20AND%20a%3A%22dropwizard-metrics-datadog%22)
 
 * Group: com.viafoura
 * Artifact: dropwizard-metrics-datadog
-* Version: 2.0.0-RC2
+* Version: 2.0.0-RC3
 
 ## Contributing
 
